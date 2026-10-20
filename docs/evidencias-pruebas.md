@@ -37,7 +37,7 @@ Resultado de la ejecución: **32 pruebas, 0 fallas** (26 de integración + 6 uni
 
 ### 1. Crear usuario (exitoso)
 
-`POST /api/v1/usuarios` → **HTTP 201**
+`POST /api/v1/usuarios`, resultado: **HTTP 201**
 
 Solicitud:
 ```json
@@ -83,7 +83,7 @@ Respuesta:
 
 ### 2. Crear segundo usuario (sin segundo nombre)
 
-`POST /api/v1/usuarios` → **HTTP 201**
+`POST /api/v1/usuarios`, resultado: **HTTP 201**
 
 Solicitud:
 ```json
@@ -128,7 +128,7 @@ Respuesta:
 
 ### 3. Crear con correo ya registrado (aunque cambien las mayusculas)
 
-`POST /api/v1/usuarios` → **HTTP 409**
+`POST /api/v1/usuarios`, resultado: **HTTP 409**
 
 Solicitud:
 ```json
@@ -157,7 +157,7 @@ Respuesta:
 
 ### 4. Crear con CURP ya registrada (restriccion UNIQUE de la BD)
 
-`POST /api/v1/usuarios` → **HTTP 409**
+`POST /api/v1/usuarios`, resultado: **HTTP 409**
 
 Solicitud:
 ```json
@@ -186,7 +186,7 @@ Respuesta:
 
 ### 5. Crear con datos no validos (Bean Validation)
 
-`POST /api/v1/usuarios` → **HTTP 400**
+`POST /api/v1/usuarios`, resultado: **HTTP 400**
 
 Solicitud:
 ```json
@@ -223,7 +223,7 @@ Respuesta:
 
 ### 6. Crear enviando id, fechaCreacion y activo (el servidor los ignora)
 
-`POST /api/v1/usuarios` → **HTTP 201**
+`POST /api/v1/usuarios`, resultado: **HTTP 201**
 
 Solicitud:
 ```json
@@ -271,7 +271,7 @@ Respuesta:
 
 ### 7. Crear con un valor fuera del catalogo (enum Sexo)
 
-`POST /api/v1/usuarios` → **HTTP 400**
+`POST /api/v1/usuarios`, resultado: **HTTP 400**
 
 Solicitud:
 ```json
@@ -304,7 +304,7 @@ Respuesta:
 
 ### 8. Listar usuarios (paginado)
 
-`GET /api/v1/usuarios` → **HTTP 200**
+`GET /api/v1/usuarios`, resultado: **HTTP 200**
 
 Respuesta:
 ```json
@@ -369,7 +369,7 @@ Respuesta:
 
 ### 9. Busqueda dinamica: nombre parcial + activo
 
-`POST /api/v1/usuarios/busqueda` → **HTTP 200**
+`POST /api/v1/usuarios/busqueda`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -407,7 +407,7 @@ Respuesta:
 
 ### 10. Busqueda dinamica: solo correo
 
-`POST /api/v1/usuarios/busqueda` → **HTTP 200**
+`POST /api/v1/usuarios/busqueda`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -445,7 +445,7 @@ Respuesta:
 
 ### 11. Busqueda dinamica sin criterios
 
-`POST /api/v1/usuarios/busqueda` → **HTTP 400**
+`POST /api/v1/usuarios/busqueda`, resultado: **HTTP 400**
 
 Solicitud:
 ```json
@@ -465,7 +465,7 @@ Respuesta:
 
 ### 12. Consultar por nombre + correo (exitoso)
 
-`POST /api/v1/usuarios/consulta` → **HTTP 200**
+`POST /api/v1/usuarios/consulta`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -495,7 +495,7 @@ Respuesta:
 
 ### 13. Consultar cuando nombre y correo no coinciden
 
-`POST /api/v1/usuarios/consulta` → **HTTP 404**
+`POST /api/v1/usuarios/consulta`, resultado: **HTTP 404**
 
 Solicitud:
 ```json
@@ -512,7 +512,7 @@ Respuesta:
 
 ### 14. Consultar con campos vacios
 
-`POST /api/v1/usuarios/consulta` → **HTTP 400**
+`POST /api/v1/usuarios/consulta`, resultado: **HTTP 400**
 
 Solicitud:
 ```json
@@ -533,7 +533,7 @@ Respuesta:
 
 ### 15. Actualizar telefono y activo (segundoNombre omitido no cambia)
 
-`PATCH /api/v1/usuarios/actualizacion` → **HTTP 200**
+`PATCH /api/v1/usuarios/actualizacion`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -571,7 +571,7 @@ Respuesta:
 
 ### 16. Actualizar segundoNombre con null explicito (se borra)
 
-`PATCH /api/v1/usuarios/actualizacion` → **HTTP 200**
+`PATCH /api/v1/usuarios/actualizacion`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -604,7 +604,7 @@ Respuesta:
 
 ### 17. Actualizar con un correo que ya usa otro usuario
 
-`PATCH /api/v1/usuarios/actualizacion` → **HTTP 409**
+`PATCH /api/v1/usuarios/actualizacion`, resultado: **HTTP 409**
 
 Solicitud:
 ```json
@@ -621,7 +621,7 @@ Respuesta:
 
 ### 18. Actualizar nombre y correo (cambio de llave)
 
-`PATCH /api/v1/usuarios/actualizacion` → **HTTP 200**
+`PATCH /api/v1/usuarios/actualizacion`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -659,7 +659,7 @@ Respuesta:
 
 ### 19. Actualizar sin campos a modificar
 
-`PATCH /api/v1/usuarios/actualizacion` → **HTTP 400**
+`PATCH /api/v1/usuarios/actualizacion`, resultado: **HTTP 400**
 
 Solicitud:
 ```json
@@ -679,7 +679,7 @@ Respuesta:
 
 ### 20. Actualizar usuario inexistente
 
-`PATCH /api/v1/usuarios/actualizacion` → **HTTP 404**
+`PATCH /api/v1/usuarios/actualizacion`, resultado: **HTTP 404**
 
 Solicitud:
 ```json
@@ -696,7 +696,7 @@ Respuesta:
 
 ### 21. Eliminar por nombre + correo (exitoso)
 
-`DELETE /api/v1/usuarios/eliminacion` → **HTTP 200**
+`DELETE /api/v1/usuarios/eliminacion`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -712,7 +712,7 @@ Respuesta:
 
 ### 22. Eliminar un usuario que ya no existe
 
-`DELETE /api/v1/usuarios/eliminacion` → **HTTP 404**
+`DELETE /api/v1/usuarios/eliminacion`, resultado: **HTTP 404**
 
 Solicitud:
 ```json
@@ -729,7 +729,7 @@ Respuesta:
 
 ### 23. JSON mal formado
 
-`POST /api/v1/usuarios` → **HTTP 400**
+`POST /api/v1/usuarios`, resultado: **HTTP 400**
 
 Solicitud:
 ```json
@@ -746,7 +746,7 @@ Respuesta:
 
 ### 24. Ruta inexistente
 
-`GET /api/v1/usuarios/1` → **HTTP 404**
+`GET /api/v1/usuarios/1`, resultado: **HTTP 404**
 
 Respuesta:
 ```json
@@ -758,7 +758,7 @@ Respuesta:
 
 ### 25. Metodo HTTP no permitido
 
-`PUT /api/v1/usuarios` → **HTTP 405**
+`PUT /api/v1/usuarios`, resultado: **HTTP 405**
 
 Solicitud:
 ```json
@@ -809,7 +809,7 @@ El usuario de prueba se crea al inicio y se elimina al final, así que la tabla 
 
 ### P1. Crear usuario
 
-`POST /api/v1/usuarios` → **HTTP 201**
+`POST /api/v1/usuarios`, resultado: **HTTP 201**
 
 Solicitud:
 ```json
@@ -855,7 +855,7 @@ Respuesta:
 
 ### P2. Crear con correo duplicado
 
-`POST /api/v1/usuarios` → **HTTP 409**
+`POST /api/v1/usuarios`, resultado: **HTTP 409**
 
 Solicitud:
 ```json
@@ -885,7 +885,7 @@ Respuesta:
 
 ### P3. Crear con datos no validos
 
-`POST /api/v1/usuarios` → **HTTP 400**
+`POST /api/v1/usuarios`, resultado: **HTTP 400**
 
 Solicitud:
 ```json
@@ -919,7 +919,7 @@ Respuesta:
 
 ### P4. Listar usuarios (paginado)
 
-`GET /api/v1/usuarios` → **HTTP 200**
+`GET /api/v1/usuarios`, resultado: **HTTP 200**
 
 Respuesta:
 ```json
@@ -954,7 +954,7 @@ Respuesta:
 
 ### P5. Busqueda dinamica: nombre parcial + activo
 
-`POST /api/v1/usuarios/busqueda` → **HTTP 200**
+`POST /api/v1/usuarios/busqueda`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -997,7 +997,7 @@ Respuesta:
 
 ### P6. Consultar por nombre + correo
 
-`POST /api/v1/usuarios/consulta` → **HTTP 200**
+`POST /api/v1/usuarios/consulta`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -1030,7 +1030,7 @@ Respuesta:
 
 ### P7. Consultar sin coincidencia
 
-`POST /api/v1/usuarios/consulta` → **HTTP 404**
+`POST /api/v1/usuarios/consulta`, resultado: **HTTP 404**
 
 Solicitud:
 ```json
@@ -1050,7 +1050,7 @@ Respuesta:
 
 ### P8. Actualizar telefono y estado civil
 
-`PATCH /api/v1/usuarios/actualizacion` → **HTTP 200**
+`PATCH /api/v1/usuarios/actualizacion`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -1088,7 +1088,7 @@ Respuesta:
 
 ### P9. Eliminar por nombre + correo
 
-`DELETE /api/v1/usuarios/eliminacion` → **HTTP 200**
+`DELETE /api/v1/usuarios/eliminacion`, resultado: **HTTP 200**
 
 Solicitud:
 ```json
@@ -1107,7 +1107,7 @@ Respuesta:
 
 ### P10. Eliminar usuario ya eliminado
 
-`DELETE /api/v1/usuarios/eliminacion` → **HTTP 404**
+`DELETE /api/v1/usuarios/eliminacion`, resultado: **HTTP 404**
 
 Solicitud:
 ```json

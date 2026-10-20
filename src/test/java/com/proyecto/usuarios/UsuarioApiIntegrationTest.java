@@ -427,7 +427,7 @@ class UsuarioApiIntegrationTest {
         }
         EVIDENCIAS.append("### ").append(++numeroCaso).append(". ").append(titulo).append("\n\n")
                 .append("`").append(resultado.getRequest().getMethod()).append(" ")
-                .append(resultado.getRequest().getRequestURI()).append("` → **HTTP ")
+                .append(resultado.getRequest().getRequestURI()).append("`, resultado: **HTTP ")
                 .append(resultado.getResponse().getStatus()).append("**\n\n");
         if (body != null) {
             EVIDENCIAS.append("Solicitud:\n```json\n").append(body).append("\n```\n\n");

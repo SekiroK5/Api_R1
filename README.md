@@ -1,4 +1,4 @@
-# Api_R1 · API REST para la administración de usuarios
+# Api_R1: API REST para la administración de usuarios
 
 ## 1. Descripción del proyecto
 
@@ -15,28 +15,22 @@ La implementación sigue una arquitectura por capas y las restricciones de la ac
 
 ### Arquitectura y responsabilidades por capa
 
-```
-com.proyecto.usuarios
-├── UsuariosApplication.java        Arranque, info de OpenAPI y formato JSON de las páginas
-├── controller/
-│   └── UsuarioController            Recibe solicitudes, valida con @Valid, delega al servicio y arma la respuesta HTTP
-├── service/
-│   ├── UsuarioService               Contrato (interfaz) de las operaciones de negocio
-│   └── UsuarioServiceImpl           Reglas de negocio: existencia, unicidad del correo, normalización y CRUD
-├── repository/
-│   └── UsuarioRepository            Spring Data JPA + JpaSpecificationExecutor (búsquedas dinámicas)
-├── entity/
-│   ├── Persona                      Clase abstracta (@MappedSuperclass) con los datos personales
-│   └── Usuario                      Entidad de la tabla usuarios (hereda de Persona)
-├── dto/request/                     UsuarioCreate/Update/Busqueda/Consulta/EliminacionRequest (con validaciones)
-├── dto/response/                    UsuarioResponse, ApiSuccessResponse<T>, ApiErrorResponse
-├── exception/
-│   └── GlobalExceptionHandler       @RestControllerAdvice + excepciones de negocio anidadas
-├── specification/
-│   └── UsuarioSpecification         Construye dinámicamente las condiciones de búsqueda
-└── enums/
-    └── Catalogos                    Enums Sexo, EstadoCivil, Nacionalidad y CodigoError
-```
+Paquete base: `com.proyecto.usuarios`
+
+| Capa (paquete) | Clase | Responsabilidad |
+| :--- | :--- | :--- |
+| (raíz) | `UsuariosApplication` | Arranque de la aplicación, información de OpenAPI y formato JSON de las páginas |
+| `controller` | `UsuarioController` | Recibe las solicitudes, valida con `@Valid`, delega al servicio y construye la respuesta HTTP |
+| `service` | `UsuarioService` | Contrato (interfaz) de las operaciones de negocio |
+| `service` | `UsuarioServiceImpl` | Reglas de negocio: existencia del usuario, unicidad del correo, normalización y operaciones CRUD |
+| `repository` | `UsuarioRepository` | Acceso a datos con Spring Data JPA y `JpaSpecificationExecutor` para las búsquedas dinámicas |
+| `entity` | `Persona` | Clase abstracta (`@MappedSuperclass`) con los datos personales |
+| `entity` | `Usuario` | Entidad de la tabla `usuarios`; hereda de `Persona` |
+| `dto.request` | `UsuarioCreateRequest`, `UsuarioUpdateRequest`, `UsuarioBusquedaRequest`, `UsuarioConsultaRequest`, `UsuarioEliminacionRequest` | Datos de entrada de cada operación, con sus validaciones |
+| `dto.response` | `UsuarioResponse`, `ApiSuccessResponse<T>`, `ApiErrorResponse` | Datos de salida y estructura uniforme de respuestas exitosas y de error |
+| `exception` | `GlobalExceptionHandler` | Manejo centralizado de errores (`@RestControllerAdvice`) y excepciones de negocio anidadas |
+| `specification` | `UsuarioSpecification` | Construcción dinámica de las condiciones de búsqueda |
+| `enums` | `Catalogos` | Enums `Sexo`, `EstadoCivil`, `Nacionalidad` y `CodigoError` |
 
 ---
 
@@ -50,8 +44,8 @@ com.proyecto.usuarios
 | Bean Validation (Hibernate Validator) | 8 | Validaciones de los DTOs |
 | PostgreSQL (Neon) | 17 | Base de datos |
 | springdoc-openapi | 2.8.9 | Swagger UI / OpenAPI |
-| Lombok | (gestionado por Spring Boot) | Getters, setters, builders y logs |
-| JUnit 5, Mockito, MockMvc | — | Pruebas |
+| Lombok | Gestionada por Spring Boot | Getters, setters, builders y logs |
+| JUnit 5, Mockito, MockMvc | Gestionada por Spring Boot | Pruebas |
 | Embedded PostgreSQL (zonky) | 2.1.0 | PostgreSQL real para las pruebas de integración |
 | Maven | 3.9 | Construcción |
 
@@ -88,7 +82,7 @@ La aplicación lee la conexión de **variables de entorno**, para que ninguna co
 | `DB_PASSWORD` | contraseña del rol en Neon |
 | `PORT` | `8080` (Railway la asigna automáticamente) |
 
-Los valores se obtienen en la consola de Neon: proyecto **api-usuarios-r1** → **Connect** → base `usuarios_db`.
+Los valores se obtienen en la consola de Neon: proyecto **api-usuarios-r1**, opción **Connect**, base `usuarios_db`.
 
 **PostgreSQL local (opcional):** crear la base con `CREATE DATABASE usuarios_db;`, ejecutar `db/script_bd.sql` y usar `DB_URL=jdbc:postgresql://localhost:5432/usuarios_db`.
 
@@ -98,8 +92,8 @@ Los valores se obtienen en la consola de Neon: proyecto **api-usuarios-r1** → 
 
 ### Desde IntelliJ IDEA
 
-1. **File → Open…** y elegir la carpeta del proyecto (se detecta el `pom.xml`).
-2. **Run → Edit Configurations… → UsuariosApplication → Environment variables** y agregar `DB_URL`, `DB_USERNAME` y `DB_PASSWORD`.
+1. **File > Open** y elegir la carpeta del proyecto (se detecta el `pom.xml`).
+2. **Run > Edit Configurations > UsuariosApplication > Environment variables** y agregar `DB_URL`, `DB_USERNAME` y `DB_PASSWORD`.
 3. Ejecutar `UsuariosApplication`.
 
 ### Desde la terminal (Maven)
@@ -141,7 +135,7 @@ Ruta base: **`/api/v1/usuarios`**
 | Método | Endpoint | Descripción | Éxito | Errores |
 | :--- | :--- | :--- | :--- | :--- |
 | **POST** | `/api/v1/usuarios` | Registrar usuario | 201 | 400, 409 |
-| **GET** | `/api/v1/usuarios` | Listar usuarios (paginado) | 200 | — |
+| **GET** | `/api/v1/usuarios` | Listar usuarios (paginado) | 200 | Ninguno |
 | **POST** | `/api/v1/usuarios/busqueda` | Búsqueda dinámica con criterios combinables | 200 | 400 |
 | **POST** | `/api/v1/usuarios/consulta` | Consultar por llave compuesta (nombre + correo) | 200 | 400, 404 |
 | **PATCH** | `/api/v1/usuarios/actualizacion` | Actualización parcial | 200 | 400, 404, 409 |
@@ -313,7 +307,7 @@ curl -X DELETE "http://localhost:8080/api/v1/usuarios/eliminacion" \
 
 ## 7. Explicación del consumo de servicios REST
 
-1. El cliente (Swagger UI, Postman, cURL o un frontend) envía una petición HTTP a `/api/v1/usuarios…`. Cuando hay datos, van en un **JSON en el cuerpo** con `Content-Type: application/json`.
+1. El cliente (Swagger UI, Postman, cURL o un frontend) envía una petición HTTP a alguno de los endpoints de `/api/v1/usuarios`. Cuando hay datos, van en un **JSON en el cuerpo** con `Content-Type: application/json`.
 2. **`UsuarioController`** convierte el JSON en el Request DTO correspondiente y lo valida con `@Valid`. Si alguna regla falla, `GlobalExceptionHandler` responde **400** con el detalle por campo, sin llegar al servicio.
 3. **`UsuarioServiceImpl`** aplica las reglas de negocio: normaliza los datos, verifica que el usuario exista y que el correo sea único, y decide qué campos cambian.
 4. **`UsuarioRepository`** (Spring Data JPA) ejecuta las consultas con parámetros, sin concatenar valores en SQL. La búsqueda dinámica usa la `Specification` que arma **`UsuarioSpecification`**.
