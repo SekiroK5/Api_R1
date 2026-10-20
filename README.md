@@ -333,6 +333,8 @@ Ejecución de `mvn test`: **32 pruebas, 0 fallas**.
 
 Las solicitudes y respuestas reales de los 25 escenarios (casos exitosos, validaciones, 404, 409, JSON mal formado, ruta inexistente y método no permitido) están en **[`docs/evidencias-pruebas.md`](docs/evidencias-pruebas.md)**.
 
+El mismo archivo incluye las **pruebas en producción**: 10 casos (alta, duplicado, validación, listado, búsqueda, consulta, 404, modificación y baja) ejecutados contra la API desplegada en Railway, con los datos guardados en Neon.
+
 ---
 
 ## 9. Diagrama de clases
