@@ -791,7 +791,7 @@ Respuesta:
 
 ## Pruebas en producción (Railway + Neon)
 
-Ejecutadas el 2026-10-20 03:50 UTC contra la API desplegada en **https://api-usuarios-production-8bcf.up.railway.app**, con los datos guardados en la base `usuarios_db` de Neon.
+Ejecutadas el 2026-10-20 03:50 UTC contra la API desplegada en **https://api-usuarios-production-7dde.up.railway.app**, con los datos guardados en la base `usuarios_db` de Neon.
 El usuario de prueba se crea al inicio y se elimina al final, así que la tabla queda como estaba.
 
 | # | Caso | Método y ruta | HTTP |
