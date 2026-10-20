@@ -121,8 +121,8 @@ mvn spring-boot:run
 
 La API está desplegada en Railway, conectada a la base `usuarios_db` de Neon:
 
-- **API:** `https://api-usuarios-production-8bcf.up.railway.app/api/v1/usuarios`
-- **Swagger UI:** **https://api-usuarios-production-8bcf.up.railway.app/swagger-ui.html**
+- **API:** `https://api-usuarios-production-7dde.up.railway.app/api/v1/usuarios`
+- **Swagger UI:** **https://api-usuarios-production-7dde.up.railway.app/swagger-ui.html**
 
 El servicio `api-usuarios` del proyecto `api-usuarios-r1` en Railway compila la rama **`develop`** con Maven (`-DskipTests`) y se vuelve a desplegar con cada push a esa rama. Las variables `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `PORT` se configuran en el servicio, no en el repositorio.
 
@@ -355,7 +355,7 @@ Incluye:
 | Diagrama de clases (imagen) | [`docs/diagrama-clases.png`](docs/diagrama-clases.png) |
 | README | este archivo |
 | Evidencias de pruebas | [`docs/evidencias-pruebas.md`](docs/evidencias-pruebas.md) |
-| URL de despliegue (Railway) | https://api-usuarios-production-8bcf.up.railway.app/swagger-ui.html |
+| URL de despliegue (Railway) | https://api-usuarios-production-7dde.up.railway.app/swagger-ui.html |
 
 ## Ramas del repositorio
 
