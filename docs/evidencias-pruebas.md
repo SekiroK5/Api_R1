@@ -786,3 +786,341 @@ Respuesta:
 }
 ```
 
+
+---
+
+## Pruebas en producción (Railway + Neon)
+
+Ejecutadas el 2026-10-20 03:50 UTC contra la API desplegada en **https://api-usuarios-production-8bcf.up.railway.app**, con los datos guardados en la base `usuarios_db` de Neon.
+El usuario de prueba se crea al inicio y se elimina al final, así que la tabla queda como estaba.
+
+| # | Caso | Método y ruta | HTTP |
+|---|---|---|---|
+| 1 | Crear usuario | `POST /api/v1/usuarios` | 201 |
+| 2 | Crear con correo duplicado | `POST /api/v1/usuarios` | 409 |
+| 3 | Crear con datos no validos | `POST /api/v1/usuarios` | 400 |
+| 4 | Listar usuarios (paginado) | `GET /api/v1/usuarios` | 200 |
+| 5 | Busqueda dinamica: nombre parcial + activo | `POST /api/v1/usuarios/busqueda` | 200 |
+| 6 | Consultar por nombre + correo | `POST /api/v1/usuarios/consulta` | 200 |
+| 7 | Consultar sin coincidencia | `POST /api/v1/usuarios/consulta` | 404 |
+| 8 | Actualizar telefono y estado civil | `PATCH /api/v1/usuarios/actualizacion` | 200 |
+| 9 | Eliminar por nombre + correo | `DELETE /api/v1/usuarios/eliminacion` | 200 |
+| 10 | Eliminar usuario ya eliminado | `DELETE /api/v1/usuarios/eliminacion` | 404 |
+
+### P1. Crear usuario
+
+`POST /api/v1/usuarios` → **HTTP 201**
+
+Solicitud:
+```json
+{
+  "nombre": "Ana",
+  "segundoNombre": "Sofia",
+  "apellidoPaterno": "Torres",
+  "apellidoMaterno": "Vega",
+  "fechaNacimiento": "1998-04-12",
+  "curp": "TOVA980412MGTRGN03",
+  "rfc": "TOVA980412KL5",
+  "sexo": "MUJER",
+  "nacionalidad": "MEXICANA",
+  "estadoCivil": "SOLTERO",
+  "correo": "ana.torres@correo.com",
+  "telefono": "4775551234"
+}
+```
+
+Respuesta:
+```json
+{
+  "mensaje": "Usuario registrado correctamente.",
+  "datos": {
+    "id": 2,
+    "nombre": "Ana",
+    "segundoNombre": "Sofia",
+    "apellidoPaterno": "Torres",
+    "apellidoMaterno": "Vega",
+    "fechaNacimiento": "1998-04-12",
+    "curp": "TOVA980412MGTRGN03",
+    "rfc": "TOVA980412KL5",
+    "sexo": "MUJER",
+    "nacionalidad": "MEXICANA",
+    "estadoCivil": "SOLTERO",
+    "correo": "ana.torres@correo.com",
+    "telefono": "4775551234",
+    "activo": true,
+    "fechaCreacion": "2026-10-20T03:50:47"
+  }
+}
+```
+
+### P2. Crear con correo duplicado
+
+`POST /api/v1/usuarios` → **HTTP 409**
+
+Solicitud:
+```json
+{
+  "nombre": "Ana",
+  "segundoNombre": "Sofia",
+  "apellidoPaterno": "Torres",
+  "apellidoMaterno": "Vega",
+  "fechaNacimiento": "1998-04-12",
+  "curp": "TOVA980412MGTRGN04",
+  "rfc": "TOVA980412KL6",
+  "sexo": "MUJER",
+  "nacionalidad": "MEXICANA",
+  "estadoCivil": "SOLTERO",
+  "correo": "ana.torres@correo.com",
+  "telefono": "4775551234"
+}
+```
+
+Respuesta:
+```json
+{
+  "codigo": "CORREO_DUPLICADO",
+  "mensaje": "El correo ya se encuentra registrado. Intente con otro correo."
+}
+```
+
+### P3. Crear con datos no validos
+
+`POST /api/v1/usuarios` → **HTTP 400**
+
+Solicitud:
+```json
+{
+  "nombre": "  ",
+  "correo": "sin-arroba",
+  "telefono": "123"
+}
+```
+
+Respuesta:
+```json
+{
+  "codigo": "DATOS_INVALIDOS",
+  "mensaje": "Verifique la información capturada e intente nuevamente.",
+  "errores": {
+    "nacionalidad": "La nacionalidad es obligatoria.",
+    "nombre": "El nombre es obligatorio y no puede contener solo espacios.",
+    "fechaNacimiento": "La fecha de nacimiento es obligatoria.",
+    "telefono": "El teléfono debe contener exactamente 10 dígitos.",
+    "rfc": "El RFC es obligatorio.",
+    "curp": "La CURP es obligatoria.",
+    "correo": "El correo electrónico no tiene un formato válido.",
+    "apellidoMaterno": "El apellido materno es obligatorio y no puede contener solo espacios.",
+    "apellidoPaterno": "El apellido paterno es obligatorio y no puede contener solo espacios.",
+    "estadoCivil": "El estado civil es obligatorio.",
+    "sexo": "El sexo es obligatorio."
+  }
+}
+```
+
+### P4. Listar usuarios (paginado)
+
+`GET /api/v1/usuarios` → **HTTP 200**
+
+Respuesta:
+```json
+{
+  "content": [
+    {
+      "id": 2,
+      "nombre": "Ana",
+      "segundoNombre": "Sofia",
+      "apellidoPaterno": "Torres",
+      "apellidoMaterno": "Vega",
+      "fechaNacimiento": "1998-04-12",
+      "curp": "TOVA980412MGTRGN03",
+      "rfc": "TOVA980412KL5",
+      "sexo": "MUJER",
+      "nacionalidad": "MEXICANA",
+      "estadoCivil": "SOLTERO",
+      "correo": "ana.torres@correo.com",
+      "telefono": "4775551234",
+      "activo": true,
+      "fechaCreacion": "2026-10-20T03:50:47"
+    }
+  ],
+  "page": {
+    "size": 10,
+    "number": 0,
+    "totalElements": 1,
+    "totalPages": 1
+  }
+}
+```
+
+### P5. Busqueda dinamica: nombre parcial + activo
+
+`POST /api/v1/usuarios/busqueda` → **HTTP 200**
+
+Solicitud:
+```json
+{
+  "nombre": "an",
+  "activo": true
+}
+```
+
+Respuesta:
+```json
+{
+  "content": [
+    {
+      "id": 2,
+      "nombre": "Ana",
+      "segundoNombre": "Sofia",
+      "apellidoPaterno": "Torres",
+      "apellidoMaterno": "Vega",
+      "fechaNacimiento": "1998-04-12",
+      "curp": "TOVA980412MGTRGN03",
+      "rfc": "TOVA980412KL5",
+      "sexo": "MUJER",
+      "nacionalidad": "MEXICANA",
+      "estadoCivil": "SOLTERO",
+      "correo": "ana.torres@correo.com",
+      "telefono": "4775551234",
+      "activo": true,
+      "fechaCreacion": "2026-10-20T03:50:47"
+    }
+  ],
+  "page": {
+    "size": 10,
+    "number": 0,
+    "totalElements": 1,
+    "totalPages": 1
+  }
+}
+```
+
+### P6. Consultar por nombre + correo
+
+`POST /api/v1/usuarios/consulta` → **HTTP 200**
+
+Solicitud:
+```json
+{
+  "nombre": "Ana",
+  "correo": "ana.torres@correo.com"
+}
+```
+
+Respuesta:
+```json
+{
+  "id": 2,
+  "nombre": "Ana",
+  "segundoNombre": "Sofia",
+  "apellidoPaterno": "Torres",
+  "apellidoMaterno": "Vega",
+  "fechaNacimiento": "1998-04-12",
+  "curp": "TOVA980412MGTRGN03",
+  "rfc": "TOVA980412KL5",
+  "sexo": "MUJER",
+  "nacionalidad": "MEXICANA",
+  "estadoCivil": "SOLTERO",
+  "correo": "ana.torres@correo.com",
+  "telefono": "4775551234",
+  "activo": true,
+  "fechaCreacion": "2026-10-20T03:50:47"
+}
+```
+
+### P7. Consultar sin coincidencia
+
+`POST /api/v1/usuarios/consulta` → **HTTP 404**
+
+Solicitud:
+```json
+{
+  "nombre": "Otra",
+  "correo": "ana.torres@correo.com"
+}
+```
+
+Respuesta:
+```json
+{
+  "codigo": "USUARIO_NO_ENCONTRADO",
+  "mensaje": "No existe un usuario con el nombre y correo electrónico proporcionados."
+}
+```
+
+### P8. Actualizar telefono y estado civil
+
+`PATCH /api/v1/usuarios/actualizacion` → **HTTP 200**
+
+Solicitud:
+```json
+{
+  "nombre": "Ana",
+  "correo": "ana.torres@correo.com",
+  "telefono": "4775559876",
+  "estadoCivil": "CASADO"
+}
+```
+
+Respuesta:
+```json
+{
+  "mensaje": "Usuario actualizado correctamente.",
+  "datos": {
+    "id": 2,
+    "nombre": "Ana",
+    "segundoNombre": "Sofia",
+    "apellidoPaterno": "Torres",
+    "apellidoMaterno": "Vega",
+    "fechaNacimiento": "1998-04-12",
+    "curp": "TOVA980412MGTRGN03",
+    "rfc": "TOVA980412KL5",
+    "sexo": "MUJER",
+    "nacionalidad": "MEXICANA",
+    "estadoCivil": "CASADO",
+    "correo": "ana.torres@correo.com",
+    "telefono": "4775559876",
+    "activo": true,
+    "fechaCreacion": "2026-10-20T03:50:47"
+  }
+}
+```
+
+### P9. Eliminar por nombre + correo
+
+`DELETE /api/v1/usuarios/eliminacion` → **HTTP 200**
+
+Solicitud:
+```json
+{
+  "nombre": "Ana",
+  "correo": "ana.torres@correo.com"
+}
+```
+
+Respuesta:
+```json
+{
+  "mensaje": "Usuario eliminado correctamente."
+}
+```
+
+### P10. Eliminar usuario ya eliminado
+
+`DELETE /api/v1/usuarios/eliminacion` → **HTTP 404**
+
+Solicitud:
+```json
+{
+  "nombre": "Ana",
+  "correo": "ana.torres@correo.com"
+}
+```
+
+Respuesta:
+```json
+{
+  "codigo": "USUARIO_NO_ENCONTRADO",
+  "mensaje": "No existe un usuario con el nombre y correo electrónico proporcionados."
+}
+```
