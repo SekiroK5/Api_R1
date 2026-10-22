@@ -33,8 +33,12 @@ public class UsuarioCreateRequest {
 
     // Expresiones regulares compartidas con los demas Request DTO
     public static final String REGEX_TEXTO_NOMBRE = "^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+([ '-][A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+)*$";
-    // La cadena vacia se acepta aqui para que @NotBlank sea quien reporte el campo obligatorio
-    public static final String REGEX_CORREO = "^$|^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$";
+    // Usuario: letras, digitos y . _ % + - (sin puntos al inicio, al final ni consecutivos).
+    // Dominio: etiquetas de letras, digitos y guiones (sin guion al inicio ni al final) y extension de 2+ letras.
+    // Ejemplos validos: juan.perez@correo.com, ana_92+ventas@empresa.com.mx
+    public static final String REGEX_CORREO =
+            "^[A-Za-z0-9_%+-]+(\\.[A-Za-z0-9_%+-]+)*@[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)*\\.[A-Za-z]{2,}$";
+    // Telefono mexicano de exactamente 10 digitos, sin espacios ni guiones (formato del documento)
     public static final String REGEX_TELEFONO = "^[0-9]{10}$";
     public static final String REGEX_CURP = "^[A-Z][AEIOUX][A-Z]{2}[0-9]{6}[HMX][A-Z]{2}[B-DF-HJ-NP-TV-Z]{3}[A-Z0-9][0-9]$";
     public static final String REGEX_RFC = "^[A-ZÑ&]{4}[0-9]{6}[A-Z0-9]{3}$";

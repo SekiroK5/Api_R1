@@ -19,16 +19,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Set<String> VALIDACIONES_OBLIGATORIO = Set.of("NotNull", "NotEmpty", "NotBlank");
 
     /**
      * En caso de que alguna validacion no se cumpla para algun DTO se tira MethodArgumentNotValidException
@@ -40,7 +46,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> manejarValidacion(MethodArgumentNotValidException ex) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
         Map<String, String> listError = new LinkedHashMap<>();
-        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+        // Si un campo incumple varias reglas, primero va la de obligatorio (@NotNull, @NotEmpty, @NotBlank)
+        List<FieldError> erroresOrdenados = new ArrayList<>(ex.getBindingResult().getFieldErrors());
+        erroresOrdenados.sort(Comparator.comparing(error -> !VALIDACIONES_OBLIGATORIO.contains(error.getCode())));
+        for (FieldError fieldError : erroresOrdenados) {
             listError.putIfAbsent(fieldError.getField(), fieldError.getDefaultMessage());
         }
         apiErrorResponse.setCodigo(CodigoError.DATOS_INVALIDOS.name());

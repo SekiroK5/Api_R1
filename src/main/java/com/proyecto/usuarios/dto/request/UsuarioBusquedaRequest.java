@@ -9,6 +9,7 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ import lombok.Setter;
  * - correo, telefono y activo: coincidencia exacta.
  * - Los criterios vacios o nulos se excluyen; los enviados se combinan con AND.
  * - Se requiere al menos un criterio y el resultado siempre se pagina.
+ * - Los criterios aceptan null a proposito (son opcionales); pagina y tamanio no.
  */
 @Getter
 @Setter
@@ -49,12 +51,15 @@ public class UsuarioBusquedaRequest {
     @Schema(description = "Estado del usuario", example = "true", nullable = true)
     private Boolean activo;
 
+    // Si se omite toma el valor por defecto; si se envia null explicitamente se rechaza
     @Builder.Default
+    @NotNull(message = "La pagina no puede ser nula.")
     @Min(value = 0, message = "La pagina debe ser mayor o igual a 0.")
     @Schema(description = "Numero de pagina (inicia en 0)", example = "0", defaultValue = "0")
     private Integer pagina = 0;
 
     @Builder.Default
+    @NotNull(message = "El tamaño de pagina no puede ser nulo.")
     @Min(value = 1, message = "El tamaño de pagina debe ser al menos 1.")
     @Max(value = 50, message = "El tamaño de pagina no debe exceder 50.")
     @Schema(description = "Registros por pagina (1 a 50)", example = "10", defaultValue = "10")
