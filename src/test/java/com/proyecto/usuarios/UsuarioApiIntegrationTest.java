@@ -161,7 +161,7 @@ class UsuarioApiIntegrationTest {
         ejecutar("Crear con datos no validos (Bean Validation)", post(URL), body)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.codigo").value("DATOS_INVALIDOS"))
-                .andExpect(jsonPath("$.errores.nombre").exists())
+                .andExpect(jsonPath("$.errores.nombre").value("El nombre es obligatorio y no puede contener solo espacios."))
                 .andExpect(jsonPath("$.errores.correo").value("El correo electrónico no tiene un formato válido."))
                 .andExpect(jsonPath("$.errores.telefono").value("El teléfono debe contener exactamente 10 dígitos."))
                 .andExpect(jsonPath("$.errores.fechaNacimiento").exists())
@@ -248,6 +248,16 @@ class UsuarioApiIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.codigo").value("DATOS_INVALIDOS"))
                 .andExpect(jsonPath("$.errores", hasKey("algunCriterio")));
+    }
+
+    @Test
+    @Order(23)
+    void buscarConPaginacionNulaDevuelve400() throws Exception {
+        ejecutar("Busqueda dinamica con pagina y tamanio nulos (@NotNull)", post(URL + "/busqueda"), """
+                { "nombre": "Juan", "pagina": null, "tamanio": null }""")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errores.pagina").value("La pagina no puede ser nula."))
+                .andExpect(jsonPath("$.errores.tamanio").value("El tamaño de pagina no puede ser nulo."));
     }
 
     // ===================== 3. Consulta por llave compuesta =====================
