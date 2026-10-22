@@ -167,17 +167,30 @@ Ruta base: **`/api/v1/usuarios`**
 
 ### Validaciones (Bean Validation)
 
+Todas las anotaciones se importan de **`jakarta.validation.constraints`**, que es el paquete que corresponde a Spring Boot 3 (`javax.validation` corresponde a Spring Boot 2). Los controladores ejecutan las validaciones con **`@Valid`** en cada parámetro `@RequestBody`.
+
 | Anotación | Uso en el proyecto |
 | :--- | :--- |
 | `@NotBlank` | Textos obligatorios: nombre, apellidos, correo y teléfono (rechaza `null`, `""` y solo espacios) |
 | `@NotEmpty` | CURP y RFC (rechaza `null` y `""`; los espacios y el formato los rechaza `@Pattern`) |
-| `@NotNull` | Campos no texto obligatorios: `fechaNacimiento`, `sexo`, `nacionalidad` y `estadoCivil` |
-| `@Email` | Formato del correo (con expresión que exige dominio) |
-| `@Pattern` | Teléfono (`^[0-9]{10}$`), CURP, RFC y nombres (solo letras y espacios) |
+| `@NotNull` | Campos obligatorios que no son texto: `fechaNacimiento`, `sexo`, `nacionalidad` y `estadoCivil` al crear, y `pagina` y `tamanio` en la búsqueda |
+| `@Email` | Formato del correo, con la expresión `REGEX_CORREO` |
+| `@Pattern` | Teléfono (`REGEX_TELEFONO`), CURP, RFC y nombres (solo letras y espacios) |
 | `@Size` | Longitudes máximas (60 en nombres y 120 en correo) |
 | `@Past` | La fecha de nacimiento debe ser pasada |
-| `@Min` / `@Max` | Página y tamaño de página de la búsqueda |
-| `@AssertTrue` | Al menos un criterio de búsqueda y al menos un campo para actualizar |
+| `@Min` / `@Max` | Página (desde 0) y tamaño de página (1 a 50) de la búsqueda |
+| `@AssertTrue` | Al menos un criterio en la búsqueda dinámica (impide búsquedas sin filtros) y al menos un campo para actualizar |
+
+**Campos que aceptan `null` a propósito.** En la búsqueda, `nombre`, `correo`, `telefono` y `activo` son criterios opcionales: si llegan en `null`, se excluyen de la consulta. En la actualización parcial, un campo en `null` significa "no modificar". Por eso estos campos no llevan `@NotNull`; en ambos casos `@AssertTrue` garantiza que se envíe al menos un valor.
+
+**Formatos aceptados por las expresiones regulares:**
+
+| Expresión | Acepta | Rechaza |
+| :--- | :--- | :--- |
+| `REGEX_CORREO` | `juan.perez@correo.com`, `ana_92+ventas@empresa.com.mx`, `maria-lopez@mi-dominio.org` | Sin arroba, sin extensión (`juan@correo`), extensión de una letra, espacios, punto al inicio o al final del usuario, puntos consecutivos, dominio que inicia con guion, caracteres como `,` |
+| `REGEX_TELEFONO` (`^[0-9]{10}$`) | `4771234567` (exactamente 10 dígitos, el formato del documento) | 9 u 11 dígitos, guiones, espacios, letras, prefijo `+52` |
+
+Cuando un campo incumple varias reglas a la vez, la respuesta muestra primero la de campo obligatorio. Por ejemplo, `"nombre": "   "` devuelve "El nombre es obligatorio y no puede contener solo espacios.". Estos formatos se comprueban en `ValidacionDtoTest`.
 
 ### Manejo de errores (`GlobalExceptionHandler`)
 
@@ -320,12 +333,13 @@ curl -X DELETE "http://localhost:8080/api/v1/usuarios/eliminacion" \
 
 ## 8. Evidencia de pruebas realizadas
 
-Ejecución de `mvn test`: **32 pruebas, 0 fallas**.
+Ejecución de `mvn test`: **60 pruebas, 0 fallas**.
 
-- **`UsuarioApiIntegrationTest`** (26 pruebas): prueba los endpoints de extremo a extremo con MockMvc contra un **PostgreSQL real** (embebido), creado con `db/script_bd.sql`. Hibernate valida el esquema (`ddl-auto=validate`).
+- **`UsuarioApiIntegrationTest`** (27 pruebas): prueba los endpoints de extremo a extremo con MockMvc contra un **PostgreSQL real** (embebido), creado con `db/script_bd.sql`. Hibernate valida el esquema (`ddl-auto=validate`).
+- **`ValidacionDtoTest`** (27 pruebas): prueba las anotaciones de los Request DTO. Revisa los formatos que aceptan y rechazan `REGEX_CORREO` y `REGEX_TELEFONO`, `@NotNull` en la paginación, `@AssertTrue` sin criterios de búsqueda y los campos obligatorios.
 - **`UsuarioServiceImplTest`** (6 pruebas): pruebas unitarias con Mockito de las reglas del servicio (normalización, correo duplicado, `segundoNombre` omitido o `null`, usuario inexistente).
 
-Las solicitudes y respuestas reales de los 25 escenarios (casos exitosos, validaciones, 404, 409, JSON mal formado, ruta inexistente y método no permitido) están en **[`docs/evidencias-pruebas.md`](docs/evidencias-pruebas.md)**.
+Las solicitudes y respuestas reales de los 26 escenarios (casos exitosos, validaciones, 404, 409, JSON mal formado, ruta inexistente y método no permitido) están en **[`docs/evidencias-pruebas.md`](docs/evidencias-pruebas.md)**.
 
 El mismo archivo incluye las **pruebas en producción**: 10 casos (alta, duplicado, validación, listado, búsqueda, consulta, 404, modificación y baja) ejecutados contra la API desplegada en Railway, con los datos guardados en Neon.
 
