@@ -126,6 +126,8 @@ La API está desplegada en Railway, conectada a la base `usuarios_db` de Neon:
 
 El servicio `api-usuarios` del proyecto `api-usuarios-r1` en Railway compila la rama **`develop`** con Maven (`-DskipTests`) y se vuelve a desplegar con cada push a esa rama. Las variables `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `PORT` se configuran en el servicio, no en el repositorio.
 
+> Nota: la versión publicada en Railway corresponde al 20 de octubre de 2026. Los ajustes de validación de los DTOs posteriores (correo estricto, `@NotNull` en la paginación y prioridad del mensaje de campo obligatorio) están en este repositorio y cubiertos por las pruebas automáticas, pero aún no se publican porque Railway no está permitiendo despliegues.
+
 ---
 
 ## 5. Endpoints implementados
@@ -341,7 +343,7 @@ Ejecución de `mvn test`: **60 pruebas, 0 fallas**.
 
 Las solicitudes y respuestas reales de los 26 escenarios (casos exitosos, validaciones, 404, 409, JSON mal formado, ruta inexistente y método no permitido) están en **[`docs/evidencias-pruebas.md`](docs/evidencias-pruebas.md)**.
 
-El mismo archivo incluye las **pruebas en producción**: 10 casos (alta, duplicado, validación, listado, búsqueda, consulta, 404, modificación y baja) ejecutados contra la API desplegada en Railway, con los datos guardados en Neon.
+El mismo archivo incluye las **pruebas en producción**: 10 casos (alta, duplicado, validación, listado, búsqueda, consulta, 404, modificación y baja) ejecutados el 20 de octubre de 2026 contra la API desplegada en Railway, con los datos guardados en Neon.
 
 ---
 
